@@ -52,6 +52,8 @@ final class SprintApplication extends PhabricatorApplication {
             // these allow task creation and editing from a Sprint Board
               'board/task/edit/(?P<id>[1-9]\d*)/'
               => 'SprintBoardTaskEditController',
+              'board/task/continue/(?P<id>[1-9]\d*)/'
+              => 'SprintBoardTaskContinueController',
               'board/task/create/'
               => 'SprintBoardTaskEditController',
               'board/batch/'

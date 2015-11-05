@@ -264,6 +264,39 @@ JX.behavior('sprint-boards', function(config, statics) {
 
         JX.Stratcom.listen(
             'click',
+            ['continue-project-card'],
+            function(e) {
+                e.kill();
+                var column = e.getNode('project-column');
+                var request_data = {
+                    responseType: 'card',
+                    columnPHID: JX.Stratcom.getData(column).columnPHID,
+                    order: statics.order
+                };
+                new JX.Workflow(e.getNode('tag:a').href, request_data)
+                    .setHandler(JX.bind(null, onedit, column))
+                    .start();
+            });
+
+        JX.Stratcom.listen(
+            'click',
+            ['reject-project-card'],
+            function(e) {
+                e.kill();
+                var column = e.getNode('project-column');
+                var request_data = {
+                    responseType: 'card',
+                    newStatus: 'open',
+                    columnPHID: JX.Stratcom.getData(column).columnPHID,
+                    order: statics.order
+                };
+                new JX.Workflow(e.getNode('tag:a').href, request_data)
+                    .setHandler(JX.bind(null, onedit, column))
+                    .start();
+            });
+
+        JX.Stratcom.listen(
+            'click',
             ['column-add-task'],
             function (e) {
 

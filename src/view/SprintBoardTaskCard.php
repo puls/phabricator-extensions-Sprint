@@ -70,6 +70,36 @@ final class SprintBoardTaskCard extends Phobject {
               'class' => 'phui-card-list-key',
           ),
           array($pointslabel, ' '));
+      $assigneelabel = 'Owner:';
+      $ownername = $this->owner != null ? $this->owner->getFullName() : "Nobody";
+      $assigneevalue = phutil_tag(
+          'dd',
+          array(
+              'class' => 'phui-card-list-value',
+          ),
+          array($ownername, ' '));
+
+      $assigneekey = phutil_tag(
+          'dt',
+          array(
+              'class' => 'phui-card-list-key',
+          ),
+          array($assigneelabel, ' '));
+      $statuslabel = 'Status:';
+      $status = $this->task->getStatus();
+      $statusvalue = phutil_tag(
+          'dd',
+          array(
+              'class' => 'phui-card-list-value',
+          ),
+          array($status, ' '));
+
+      $statuskey = phutil_tag(
+          'dt',
+          array(
+              'class' => 'phui-card-list-key',
+          ),
+          array($statuslabel, ' '));
       return phutil_tag(
           'dl',
           array(
@@ -78,6 +108,10 @@ final class SprintBoardTaskCard extends Phobject {
           array(
               $pointskey,
               $pointsvalue,
+              $assigneekey,
+              $assigneevalue,
+              $statuskey,
+              $statusvalue
           ));
     }
 
@@ -125,6 +159,45 @@ final class SprintBoardTaskCard extends Phobject {
                     .'/'))
       ->setBarColor($bar_color)
       ->addAttribute($this->getCardAttributes());
+
+    $continue_title = "";
+    $continue_icon = "";
+    switch ($task->getStatus()) {
+      case "open":
+        $continue_title = "Start";
+        $continue_icon = "fa-play";
+        break;
+      case "inprogress":
+        $continue_title = "Finish";
+        $continue_icon = "fa-flag-checkered";
+        break;
+      case "finished":
+        $continue_title = "Deliver";
+        $continue_icon = "fa-truck";
+        break;
+      case "delivered":
+        $continue_title = "Accept";
+        $continue_icon = "fa-thumbs-up";
+        break;
+    }
+
+    if ($continue_title != "") {
+      $card->addAction(
+        id(new PHUIListItemView())
+            ->setName(pht($continue_title))
+            ->setIcon($continue_icon)
+            ->addSigil('continue-project-card')
+            ->setHref('/project/sprint/board/task/continue/'.$task->getID().'/'));
+    }
+
+    if ($task->getStatus() == 'delivered') {
+      $card->addAction(
+        id(new PHUIListItemView())
+            ->setName(pht("Reject"))
+            ->setIcon('fa-thumbs-down')
+            ->addSigil('reject-project-card')
+            ->setHref('/project/sprint/board/task/continue/'.$task->getID().'/'));
+    }
 
     return $card;
   }
